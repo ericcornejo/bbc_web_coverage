@@ -147,11 +147,18 @@ class TC_bbc < Test::Unit::TestCase
     puts "Test Passed: 20 results"
   end
   
-  def filterSearch(filter)
+  def filterSearch(filter, moreFilter)
     #click on the filter
-    @element = @driver.find_element(:class, 'filters')
-    element = @element.find_element(:link_text, filter).click    
-
+    puts moreFilter
+    if moreFilter > 0
+      @element = @driver.find_element(:id, 'orb-modules')
+      element = @element.find_element(:xpath, "//a[contains(text(),'More Filters')]").click
+      element = @element.find_element(:xpath, "//div[@id='orb-modules']/section/div/ol[2]/li/a").click      
+    else
+      @element = @driver.find_element(:class, 'filters')
+      element = @element.find_element(:link_text, filter).click         
+    end
+    sleep 4
     waitVar = Selenium::WebDriver::Wait.new(:timeout => 15)
     form = waitVar.until {
         @element = @driver.find_element(:link_text, "Show more results")
@@ -160,7 +167,7 @@ class TC_bbc < Test::Unit::TestCase
     puts "Test Passed: Show more results found" if form.displayed?
 
     #incase results are still rendering
-    sleep 4
+    sleep 2
     
     #Set focus back on the search content element orb-modules
     @element = @driver.find_element(:id, 'orb-modules') 
@@ -208,6 +215,7 @@ class TC_bbc < Test::Unit::TestCase
     for r in resultsList
       if !(r.include?(filter))
         missing = 1
+        puts "missing " + filter + " in " + r.to_s
       end
     end 
 
@@ -215,25 +223,35 @@ class TC_bbc < Test::Unit::TestCase
     puts "Test Passed: Results does contain the filter in the Tags of all the results"
     
   end
+  
+  def moreFilter(filter)
+    
+    @element = @driver.find_element(:id, 'orb-modules')
+    
+  #  //*[@id="orb-modules"]/section[1]/div/header/ol/li[7]/a/text()
+#    element = @element.find_element(:class, 'more').click
+  #  element = @element.find_element(:xpath, "//*[@id='orb-modules']/section[1]/div/header/ol/li[7]/a/text()").click
+    element = @element.find_element(:xpath, "//a[contains(text(),'More Filters')]").click
+    element = @element.find_element(:xpath, "//div[@id='orb-modules']/section/div/ol[2]/li/a").click
+    
+  end
 end
-#driver = Selenium::WebDriver.for:firefox
-#assert_not_nil((driver.navigate.to "http://bbcasdf.com"), "page is null")
-#
-#driver.navigate.to "http://bbc.com"
-#
-#driver.find_element(:id, 'orb-search-q').send_keys('World Market')
-#
-#driver.find_element(:class, 'se-searchbox__submit').submit
-require 'test/unit/ui/console/testrunner'
+
+#require 'test/unit/ui/console/testrunner'
 
 test = TC_bbc.new("Marv")
 test.startup(ARGV[0])
 test.setupSearch("World Market")
 test.validateResult()
 test.moreResults()
-test.filterSearch('Programmes')
-test.filterSearch('News')
-test.filterSearch('Sport')
-test.filterSearch('About the BBC')
-test.filterSearch('World Service')
+test.filterSearch('Programmes', 0)
+test.filterSearch('News', 0)
+test.filterSearch('Sport', 0)
+test.filterSearch('About the BBC', 0)
+test.filterSearch('World Service', 0)
+sleep 2
+test.filterSearch('Bitesize', 1)
+
+
+
 #Test::Unit::UI::Console::TestRunner.run(TC_bbc)
