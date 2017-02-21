@@ -33,9 +33,10 @@ Tests:
 
 Test to be implemented (Bugs):
 1) Test for the More filters section
- - could not get selenium to reference the more filters link tried class and xpath
+ - could not get selenium to reference the more filters link tried class and xpath (fixed on)
 2) Chrome version is failing because the 'text' function renders the contents differently, so this needs revision
-
+3) More tests for the "More filters" menu
+  appear and disapear of filters
 Approach:
 I though of useing Watir, but I had got stuck on referencing elements and sporadic failures on previous projects
 and I noticed more documentation on Selenium-webdriver.  That is the reason I used Selenium-webdriver
